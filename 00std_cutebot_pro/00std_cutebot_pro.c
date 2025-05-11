@@ -52,6 +52,12 @@ uint8_t I2CBUF_LED_RIGHT_GREEN[]  = {0x99,0x0f,0x01,         0x00,LED_INTENSITY,
 uint8_t I2CBUF_LED_RIGHT_BLUE[]   = {0x99,0x0f,0x01,         0x00,         0x00,LED_INTENSITY,0x88};
 uint8_t I2CBUF_LED_RIGHT_OFF[]    = {0x99,0x0f,0x01,         0x00,         0x00,         0x00,0x88};
 
+
+void wait(void) {
+    volatile uint32_t a;
+    for (a=0; a<4000000;a++);
+}
+
 void i2c_init(void) {
    //  3           2            1           0
     // 1098 7654 3210 9876 5432 1098 7654 3210
@@ -146,5 +152,19 @@ int main(void) {
     i2c_send(I2CBUF_LED_RIGHT_BLUE,    sizeof(I2CBUF_LED_RIGHT_BLUE));
     i2c_send(I2CBUF_LED_RIGHT_OFF,     sizeof(I2CBUF_LED_RIGHT_OFF));
 
-    while(1);
+
+    // Really fun piece of code
+    i2c_send(I2CBUF_MOTOR_LEFT_FWD,    sizeof(I2CBUF_MOTOR_LEFT_FWD));
+    i2c_send(I2CBUF_MOTOR_RIGHT_BACK,  sizeof(I2CBUF_MOTOR_RIGHT_BACK));
+    while(1){
+        i2c_send(I2CBUF_LED_LEFT_RED,      sizeof(I2CBUF_LED_LEFT_RED));
+        i2c_send(I2CBUF_LED_RIGHT_RED,   sizeof(I2CBUF_LED_RIGHT_RED));
+        wait();
+        i2c_send(I2CBUF_LED_LEFT_GREEN,    sizeof(I2CBUF_LED_LEFT_GREEN));
+        i2c_send(I2CBUF_LED_RIGHT_GREEN,     sizeof(I2CBUF_LED_RIGHT_GREEN));
+        wait();
+        i2c_send(I2CBUF_LED_LEFT_BLUE,      sizeof(I2CBUF_LED_LEFT_BLUE));
+        i2c_send(I2CBUF_LED_RIGHT_BLUE,   sizeof(I2CBUF_LED_RIGHT_BLUE));
+        wait();
+    };
 }
